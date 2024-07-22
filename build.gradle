@@ -1,0 +1,45 @@
+version = '0.1.0-SNAPSHOT'
+defaultTasks 'clean', 'build'
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'idea'
+sourceCompatibility = 1.8
+ext.rundeckPluginVersion = '1.2'
+ext.rundeckVersion = '3.0.22'
+String lombokDep = 'org.projectlombok:lombok:1.18.34'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.rundeck:rundeck-core:3.0.22-20190512'
+    implementation 'org.apache.httpcomponents.client5:httpclient5:5.3'
+    implementation 'org.apache.logging.log4j:log4j-core:2.23.1'
+    implementation 'org.apache.logging.log4j:log4j-api:2.23.1'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.12.0'
+    testImplementation 'org.mockito:mockito-core:5.12.0'
+
+    compileOnly lombokDep
+    annotationProcessor lombokDep
+
+    testCompileOnly lombokDep
+    testAnnotationProcessor lombokDep
+}
+
+test {
+    useJUnitPlatform()
+}
+
+ext.pluginClassNames = 'com.example.rundeck.plugin.example.SimpleNotificationPlugin'
+jar {
+    manifest {
+        attributes 'Rundeck-Plugin-Classnames': pluginClassNames
+        attributes 'Rundeck-Plugin-File-Version': version
+        attributes 'Rundeck-Plugin-Version': rundeckPluginVersion, 'Rundeck-Plugin-Archive': 'true'
+    }
+}
